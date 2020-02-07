@@ -27,8 +27,8 @@
         "readline-sync":"*",
         "@replit/protocol":"*",
         "@replit/crosis":"*",
-	"bufferutil":"*",
-	"utf-8-validate":"*"	
+		"bufferutil":"*",
+		"utf-8-validate":"*"	
     },
     "bin": {
     	"replitcli":"./index.js"
