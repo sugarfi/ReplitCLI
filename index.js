@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 
 global.WebSocket = require('ws');
 
@@ -9,7 +9,6 @@ const TextDecoder = require('text-encoder-lite').TextDecoderLite;
 const TextEncoder = require('text-encoder-lite').TextEncoderLite;
 const AdmZip = require('adm-zip');
 const readline = require('readline-sync');
-require('dotenv').config();
 
 function getToken(replId, apiKey) {
     return fetch(`https://repl.it/api/v0/repls/${replId}/token`, {

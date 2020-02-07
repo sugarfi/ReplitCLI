@@ -1,6 +1,6 @@
 {
     "name": "replitcli",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "A CLI to interact with repl.it. (alpha)",
     "main": "index.js",
     "scripts": {
@@ -26,7 +26,12 @@
         "adm-zip":"*",
         "readline-sync":"*",
         "@replit/protocol":"*",
-        "@replit/crosis":"*"
+        "@replit/crosis":"*",
+	"bufferutil":"*",
+	"utf-8-validate":"*"	
+    },
+    "bin": {
+    	"replitcli":"./index.js"
     },
     "homepage": "https://github.com/sugarfi/ReplitCLI#readme"
 }
