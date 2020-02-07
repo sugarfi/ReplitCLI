@@ -1,4 +1,5 @@
 # ReplitCLI
+[![Run on Repl.it](https://repl.it/badge/github/sugarfi/ReplitCLI)](https://repl.it/github/sugarfi/ReplitCLI)
 ReplitCLI is a CLI to interact with Repl.it. It uses Crosis, the repl.it API, to run, read, and write files in a repl from the command line. This allows you to have work stored locally on your computer and deploy effortlessly to repl.it. Note that this app is still in beta, and you may experience some bugs. If that happens, and it will, simply open an issue.
 # Usage
 ReplitCLI is designed to be used like git, with push and pull commands to manipulate stuff. Before you can do any of that, though, you must install it. Simply run:
