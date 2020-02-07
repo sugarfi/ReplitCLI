@@ -1,0 +1,32 @@
+{
+    "name": "replitcli",
+    "version": "1.0.0",
+    "description": "A CLI to interact with repl.it. (alpha)",
+    "main": "index.js",
+    "scripts": {
+        "test": "node index.js hello"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sugarfi/ReplitCLI.git"
+    },
+    "keywords": [
+        "crosis",
+        "replit"
+    ],
+    "author": "sugarfi",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/sugarfi/ReplitCLI/issues"
+    },
+    "dependencies": {
+        "ws":"*",
+        "text-encoder-lite":"*",
+        "node-fetch":"*",
+        "adm-zip":"*",
+        "readline-sync":"*",
+        "@replit/protocol":"*",
+        "@replit/crosis":"*"
+    },
+    "homepage": "https://github.com/sugarfi/ReplitCLI#readme"
+}
