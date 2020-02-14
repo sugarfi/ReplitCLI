@@ -70,134 +70,185 @@ async function download(url, path) {
     });
 }
 
-async function start() {
-    var argv = process.argv.slice(3);
+/* Functions for commands */
+
+async function info(argv) {
+	if (argv.length < 1) {
+    	console.log('Error: no repl to read info from');
+        process.exit(1);
+    }
+    var user = argv[0].split('/')[0];
+    var repl = argv[0].split('/')[1];
+    const json = await getJSON(user, repl);
+    console.log('ID:', json.id);
+    console.log('URL:', `https://repl.it${json.url}`);
+    console.log('Created:', json.time_created);
+    console.log('Files:');
+    json.fileNames.forEach(function (file) {
+        console.log(`\t${file}`);
+    });
+}
+
+async function init(argv) {
     var files = [];
-    const command = process.argv[2];
-    if (command == 'info') {
-        if (argv.length < 1) {
-            console.log('Error: no repl to read info from');
-            process.exit(1);
-        }
-        var user = argv[0].split('/')[0];
-        var repl = argv[0].split('/')[1];
-        const json = await getJSON(user, repl);
-        console.log('ID:', json.id);
-        console.log('URL:', `https://repl.it${json.url}`);
-        console.log('Created:', json.time_created);
-        console.log('Files:');
-        json.fileNames.forEach(function (file) {
-            console.log(`\t${file}`);
-        });
-    } else if (command == 'init') {
-        if (argv.length < 1) {
-            console.log('Error: no API key provided');
-            process.exit(1);
-        }
-        fs.mkdir('.repl', function (err) {
-            if (err) throw err;
-        });
-        fs.writeFileSync('.repl/files', JSON.stringify(files));
-        fs.writeFileSync('.repl/key', argv[0])
-    } else if (command == 'push') {
-        if (argv.length < 1) {
-            console.log('Error: no repl to push to');
-            process.exit(1);
-        }
-        var user = argv[0].split('/')[0];
-        var repl = argv[0].split('/')[1];
+
+	if (argv.length < 1) {
+    	console.log('Error: no API key provided');
+    	process.exit(1);
+    }
+    fs.mkdir('.repl', function (err) {
+    	if (err) throw err;
+    });
+    fs.writeFileSync('.repl/files', JSON.stringify(files));
+    fs.writeFileSync('.repl/key', argv[0]);
+}
+
+async function push(argv) {
+    if (argv.length < 1) {
+        console.log('Error: no repl to push to');
+        process.exit(1);
+    }
+    var user = argv[0].split('/')[0];
+    var repl = argv[0].split('/')[1];
+
+    const decoder = new TextDecoder();
+    const key = decoder.decode(fs.readFileSync('.repl/key'));
+    const client = await connect(user, repl, key);
+    files = JSON.parse(fs.readFileSync('.repl/files'));
+
+    for (var i = 0; i < files.length; ++i) {
+        var file = files[i];
+        const data = fs.readFileSync(file);
         const decoder = new TextDecoder();
-        const key = decoder.decode(fs.readFileSync('.repl/key'));
-        const client = await connect(user, repl, key);
-        files = JSON.parse(fs.readFileSync('.repl/files'));
+        await writeFile(client, file, decoder.decode(data));
+    }
 
-        var i;
-        for (i = 0; i < files.length; i++) {
-            var file = files[i];
-            const data = fs.readFileSync(file);
-            const decoder = new TextDecoder();
-            await writeFile(client, file, decoder.decode(data));
-        }
+    client.close();
+}
 
-        client.close();
-    } else if (command == 'pull') {
-        if (argv.length < 1) {
-            console.log('Error: no repl to pull from');
-            process.exit(1);
-        }
-        var user = argv[0].split('/')[0];
-        var repl = argv[0].split('/')[1];
-        fs.mkdir(repl, function (err) {
-            if (err) throw err;
-        });
-        await download(`https://repl.it/@${user}/${repl}.zip`, `${repl}/${repl}.zip`);
-        var zip = new AdmZip(`${repl}/${repl}.zip`);
-        zip.extractAllTo(repl, true);
-        fs.unlink(`${repl}/${repl}.zip`);
-    } else if (command == 'add') {
-        if (argv.length < 1) {
-            console.log('No file to add');
-            process.exit(1);
-        }
-        files = JSON.parse(fs.readFileSync('.repl/files'));
-        files.push(argv[0]);
-        fs.writeFileSync('.repl/files', JSON.stringify(files));
-    } else if (command == 'status') {
-        files = JSON.parse(fs.readFileSync('.repl/files'));
-        files.forEach(function (file) {
-            console.log(`ADDED ${file}`)
-        });
-    } else if (command == 'clear') {
-        files = [];
-        fs.writeFileSync('.repl/files', JSON.stringify(files));
-    } else if (command == 'run') {
-        if (argv.length < 1) {
-            console.log('Error: no repl to run');
-            process.exit(1);
-        }
-        var user = argv[0].split('/')[0];
-        var repl = argv[0].split('/')[1];
-        const decoder = new TextDecoder();
-        const key = decoder.decode(fs.readFileSync('.repl/key'));
-        const client = await connect(user, repl, key);
+async function pull(argv) {
+    if (argv.length < 1) {
+        console.log('Error: no repl to pull from');
+        process.exit(1);
+    }
+    var user = argv[0].split('/')[0];
+    var repl = argv[0].split('/')[1];
 
-        const runner = client.openChannel({ service: 'shellrun' });
-        runner.on('command', _ => console.log(_.output));
-        await runner.request({ runMain: {}});
+    fs.mkdir(repl, function (err) {
+        if (err) throw err;
+    });
 
-        runner.close();
-        client.close();
-    } else if (command == 'bash') {
-        if (argv.length < 1) {
-            console.log('Error: no repl to run');
-            process.exit(1);
+    await download(`https://repl.it/@${user}/${repl}.zip`, `${repl}/${repl}.zip`);
+
+    var zip = new AdmZip(`${repl}/${repl}.zip`);
+    zip.extractAllTo(repl, true);
+    fs.unlink(`${repl}/${repl}.zip`);
+}
+
+async function add(argv) {
+    if (argv.length < 1) {
+        console.log('No file to add');
+        process.exit(1);
+    }
+    files = JSON.parse(fs.readFileSync('.repl/files'));
+    files.push(argv[0]);
+    fs.writeFileSync('.repl/files', JSON.stringify(files));
+}
+
+async function status(argv) {
+    files = JSON.parse(fs.readFileSync('.repl/files'));
+    files.forEach(function (file) {
+        console.log(`ADDED ${file}`);
+    });
+}
+
+async function clear(argv) {
+    files = [];
+    fs.writeFileSync('.repl/files', JSON.stringify(files));
+}
+
+async function run(argv) {
+    if (argv.length < 1) {
+        console.log('Error: no repl to run');
+        process.exit(1);
+    }
+    var user = argv[0].split('/')[0];
+    var repl = argv[0].split('/')[1];
+    const decoder = new TextDecoder();
+    const key = decoder.decode(fs.readFileSync('.repl/key'));
+    const client = await connect(user, repl, key);
+
+    const runner = client.openChannel({ service: 'shellrun' });
+    runner.on('command', _ => console.log(_.output));
+    await runner.request({ runMain: {}});
+
+    runner.close();
+    client.close();
+}
+
+async function replBash(argv) {
+    if (argv.length < 1) {
+        console.log('Error: no repl to run');
+        process.exit(1);
+    }
+    var user = argv[0].split('/')[0];
+    var repl = argv[0].split('/')[1];
+    const decoder = new TextDecoder();
+    const key = decoder.decode(fs.readFileSync('.repl/key'));
+    const client = await connect(user, repl, key);
+
+    const exec = client.openChannel({ service: 'exec' });
+    exec.on('command', function (out) {
+        if (out.output) process.stdout.write(out.output);
+        if (out.error) process.stdout.write(out.error);
+    });
+
+    while (1) {
+        var cmd = readline.question('> ');
+        var first = [cmd.split(' ')[0]];
+        var args = cmd.split(' ').slice(1).join(' ');
+        if (args) {
+            first.push(args);
         }
-        var user = argv[0].split('/')[0];
-        var repl = argv[0].split('/')[1];
-        const decoder = new TextDecoder();
-        const key = decoder.decode(fs.readFileSync('.repl/key'));
-        const client = await connect(user, repl, key);
-
-        const exec = client.openChannel({ service: 'exec' });
-        exec.on('command', function (out) {
-            if (out.output) process.stdout.write(out.output);
-            if (out.error) process.stdout.write(out.error);
-        });
-
-        while (1) {
-            var cmd = readline.question('> ');
-            var first = [cmd.split(' ')[0]];
-            var args = cmd.split(' ').slice(1).join(' ');
-            if (args) {
-                first.push(args);
-            }
-            await exec.request({ exec: { args: first }});
-        }
-    } else if (command == 'hello') {
-        console.log('Hello from replit-cli!');
-    } else {
-        console.log(`Unknown command ${command}`)
+        await exec.request({ exec: { args: first }});
     }
 }
 
-start();
+async function yoWassup(argv) {
+    console.log('Hello from replit-cli!');
+}
+
+/* Storage of commands and the appropriate functions. */
+
+var cmdDict = {
+// The name + the function
+	'info': info,
+	'init': init,
+    'push': push,
+    'pull': pull,
+    'add': add,
+    'status': status,
+    'clear': clear,
+    'run': run,
+    'bash': replBash,
+    'hello': yoWassup
+};
+
+async function start() {
+	var argv = process.argv.slice(3);
+	const command = process.argv[2];
+
+	// Check if the parameter is one of the commands in cmdDict, and call the associated function if it is.
+	for (var k in cmdDict) {
+		if (k == command) {
+			cmdDict[k](argv);
+			return;
+		}
+	}
+
+	// The start() function returns when it finds the right command.
+	// It will only reach here if it doesn't find the command.
+	console.log(`Unknown command ${command}`);
+}
+
+ start();
