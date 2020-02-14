@@ -45,3 +45,10 @@ That's it! Your files have been pushed. Note that after adding a file once, you 
 replitcli clear
 ```
 That is all replitcli can do at the moment, and it is still buggy. However, I plan to edit and develop it more in the future.  This is free software, and can be used however, whenever, and whyever you want, but credit is nice. Feel free to make changes or leave feedback and issues here, on repl.it, or on the repl.it discord.
+
+# Running from source
+You'll need to install the `ws`, `@replit/crosis`, `@replit/protocol`, `text-encoder-lite`, `adm-zip` and `readline-sync` modules.<br>
+This can be done with the following command(inside the repository): `npm install ws @replit/protocol @replit/crosis text-encoder-lite adm-zip readline-sync`<br>
+
+Afterwards, you can just run index.js: `node index.js hello`<br>
+That's it!

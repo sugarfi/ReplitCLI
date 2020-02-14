@@ -20,18 +20,18 @@
         "url": "https://github.com/sugarfi/ReplitCLI/issues"
     },
     "dependencies": {
-        "ws":"*",
-        "text-encoder-lite":"*",
-        "node-fetch":"*",
-        "adm-zip":"*",
-        "readline-sync":"*",
-        "@replit/protocol":"*",
-        "@replit/crosis":"*",
-		"bufferutil":"*",
-		"utf-8-validate":"*"	
+        "@replit/crosis": "^2.3.0",
+        "@replit/protocol": "^0.2.2",
+        "adm-zip": "^0.4.14",
+        "bufferutil": "*",
+        "node-fetch": "^2.6.0",
+        "readline-sync": "^1.4.10",
+        "text-encoder-lite": "^2.0.0",
+        "utf-8-validate": "*",
+        "ws": "^7.2.1"
     },
     "bin": {
-    	"replitcli":"./index.js"
+        "replitcli": "./index.js"
     },
     "homepage": "https://github.com/sugarfi/ReplitCLI#readme"
 }
