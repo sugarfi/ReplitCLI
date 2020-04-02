@@ -142,7 +142,9 @@ async function pull(argv) {
 
     var zip = new AdmZip(`${repl}/${repl}.zip`);
     zip.extractAllTo(repl, true);
-    fs.unlink(`${repl}/${repl}.zip`);
+    fs.unlink(`${repl}/${repl}.zip`, function (err) {
+        if (err) throw err;
+    });
 }
 
 async function add(argv) {

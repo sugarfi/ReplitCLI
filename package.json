@@ -1,6 +1,6 @@
 {
     "name": "replitcli",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A CLI to interact with repl.it. (alpha)",
     "main": "index.js",
     "scripts": {
