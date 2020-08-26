@@ -135,6 +135,23 @@ async function pull(argv) {
     var repl = argv[0].split('/')[1];
     var dir = argv[1] || repl;
 
+    let isEmpty = false;
+    try {
+    	dirIter = await fs.promises.opendir(dir)
+		const { value, done } = await dirIter[Symbol.asyncIterator]().next();
+		console.log(value)
+		isEmpty = !value;
+    } catch(err) {
+        if (/^ENOENT: no such file or directory, opendir '(.*)'$/.test(err.message)) {
+			isEmpty = true;
+		} else {
+			throw err;
+		}
+    }
+	if (!isEmtpy) {
+		throw new Error(`Directory ${JSON.stringify(dir)} is not empty, refusing to pull into it`)
+	}
+
     fs.mkdir(dir, function (err) {
         if (err) throw err;
     });
