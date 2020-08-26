@@ -4,15 +4,19 @@
 
 ReplitCLI is a CLI to interact with Repl.it. It uses Crosis, the repl.it API, to run, read, and write files in a repl from the command line. This allows you to have work stored locally on your computer and deploy effortlessly to repl.it. Note that this app is still in beta, and you may experience some bugs. If that happens, and it will, simply open an issue.
 # Usage
-ReplitCLI is designed to be used like git, with push and pull commands to manipulate stuff. Before you can do any of that, though, you must install it. Simply run:
+ReplitCLI is designed to be used like git, with push and pull commands to manipulate stuff. You can run `replitcli` using `npx` (note the 'x'), which comes with node. 
 ```
-sudo npm install -g replitcli
+npx replitcli hello
 ```
-This should install the latest version. To test your installation, run:
+You should see a friendly greeting. If not, open an issue here. 
+Note, this re-downloads the code each time you run it. If you don't want this, run
 ```
-replitcli hello
+npm install replitcli
 ```
-You should see a friendly greeting. If not, open an issue here. Otherwise, you can begin using the tool. The first thing you can do is get information about a repl. Simply run:
+to download it into your current directory's `node_modules/` and continue running with `npx`.
+You can also install it globally with `-g` but if you get permission errors, don't install packages with `sudo` permissions! [Why this is bad and a better solution.](https://dev.to/brylie/don-t-use-sudo-with-npm-install-56p9#:~:text=Using%20%22sudo%22%20when%20installing%20NPM,sudo%22%20when%20installing%20NPM%20packages.)
+The rest of this tutorial won't prefix commands with `npx`, but you should still add that if you haven't installed the package globally.
+Otherwise, you can begin using the tool. The first thing you can do is get information about a repl. Simply run:
 ```
 replitcli info sugarfi/Hello
 ```
