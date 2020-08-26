@@ -32,7 +32,7 @@ Then, you can use the normal bash commands to navigate the repl. Finally, the la
 ```
 replitcli init <key>
 ```
-Where `key` is your Crosis API key. (that is required to push to repls, sorry!). Now you have a .repl directory for replitcli to work in. Then, you should edit some files to push to the repl. For each file you edit, use:
+Where `key` is your Crosis API key from [the devs site](http://devs.turbio.repl.co/). (that is required to push to repls, sorry!). Now you have a .repl directory for replitcli to work in. Then, you should edit some files to push to the repl. For each file you edit, use:
 ```
 replitcli add <filename>
 ```
