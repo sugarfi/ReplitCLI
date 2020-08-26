@@ -133,15 +133,16 @@ async function pull(argv) {
     }
     var user = argv[0].split('/')[0];
     var repl = argv[0].split('/')[1];
+    var dir = argv[1] || repl;
 
-    fs.mkdir(repl, function (err) {
+    fs.mkdir(dir, function (err) {
         if (err) throw err;
     });
 
     await download(`https://repl.it/@${user}/${repl}.zip`, `${repl}/${repl}.zip`);
 
     var zip = new AdmZip(`${repl}/${repl}.zip`);
-    zip.extractAllTo(repl, true);
+    zip.extractAllTo(dir, true);
     fs.unlink(`${repl}/${repl}.zip`, function (err) {
         if (err) throw err;
     });
