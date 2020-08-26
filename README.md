@@ -20,7 +20,7 @@ This will give you information about the repl sugarfi/Hello. All repl names take
 ```
 replitcli pull sugarfi/Hello
 ```
-This creates a new folder `Hello/`, and downloads the repl to it. The next thing you can do is run this repl. You can simply run:
+This creates a new folder `Hello/` (which you can change by passing a different directory to clone into), and downloads the repl to it. The next thing you can do is run this repl. You can simply run:
 ```
 replitcli run sugarfi/Hello
 ```

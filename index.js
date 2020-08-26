@@ -133,15 +133,33 @@ async function pull(argv) {
     }
     var user = argv[0].split('/')[0];
     var repl = argv[0].split('/')[1];
+    var dir = argv[1] || repl;
 
-    fs.mkdir(repl, function (err) {
+    let isEmpty = false;
+    try {
+    	dirIter = await fs.promises.opendir(dir)
+		const { value, done } = await dirIter[Symbol.asyncIterator]().next();
+		console.log(value)
+		isEmpty = !value;
+    } catch(err) {
+        if (/^ENOENT: no such file or directory, opendir '(.*)'$/.test(err.message)) {
+			isEmpty = true;
+		} else {
+			throw err;
+		}
+    }
+	if (!isEmtpy) {
+		throw new Error(`Directory ${JSON.stringify(dir)} is not empty, refusing to pull into it`)
+	}
+
+    fs.mkdir(dir, function (err) {
         if (err) throw err;
     });
 
     await download(`https://repl.it/@${user}/${repl}.zip`, `${repl}/${repl}.zip`);
 
     var zip = new AdmZip(`${repl}/${repl}.zip`);
-    zip.extractAllTo(repl, true);
+    zip.extractAllTo(dir, true);
     fs.unlink(`${repl}/${repl}.zip`, function (err) {
         if (err) throw err;
     });
